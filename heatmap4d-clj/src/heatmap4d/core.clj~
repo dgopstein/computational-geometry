@@ -1,0 +1,70 @@
+(ns heatmap4d.core
+  (:require  [clojure.math.numeric-tower :as math]))
+
+(use 'mikera.image.core)
+(use 'mikera.image.colours)
+
+(def img-size 32)
+
+; https://github.com/clojure/math.numeric-tower
+(defn sqr
+  "Uses the numeric tower expt to square a number"
+   [x]
+      (math/expt x 2))
+
+(defn euclidean-squared-distance
+  "Computes the Euclidean squared distance between two sequences"
+  [a b]
+    (reduce + (map (comp sqr -) a b)))
+
+(defn euclidean-distance
+   "Computes the Euclidean distance between two sequences"
+   [a b]
+     (math/sqrt (euclidean-squared-distance a b)))
+
+(defn max-elems [n lst] (take n (sort lst)))
+
+(defn heatmap4d-index
+    "Bruteforce heatmap, serves as a comparison point for other implementations"
+    [img points]
+
+    (let [d 3
+          pixel-array (get-pixel-array img)]
+
+      (doseq [[start-x start-y end-x end-y] points
+              x1 (range width)
+              x2 (range height)
+              y1 (range width)
+              y2 (range height) ]
+
+        (let [dist (euclidean-distance)]
+          (if (<= dist d)
+             (aset pixel-array [x1 y1 x2 y2] (- d distance))))))
+
+  (max-elems 10 pixel-array))
+
+;; create a new image
+(def bi (new-image img-size img-size))
+
+;; gets the pixels of the image, as an int array
+(def pixels (get-pixels bi))
+
+(def pixel-array (partition img-size pixels))
+
+(defn -main
+   "Application entry point"
+   [& args]
+  ;; fill some random pixels with colours
+
+  (prn (type pixels))
+
+  (dotimes [i 1024]
+    (aset pixels i (rand-colour)))
+
+  ;; update the image with the newly changed pixel values
+  (set-pixels bi pixels)
+
+  ;; view our new work of art
+  ;; the zoom function will automatically interpolate the pixel values
+  (show bi :zoom 10.0 :title "Isn't it beautiful?"))
+
