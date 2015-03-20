@@ -36,15 +36,14 @@
           pixel-array (get-pixel-array img)]
 
       (doseq [[start-x start-y end-x end-y] points
-              ^ints x1 (map int (range width))
-              ^ints y1 (map int (range height))
-              ^ints x2 (map int (range width))
-              ^ints y2 (map int (range height)) ]
+              x1 (range width)
+              y1 (range height)
+              x2 (range width)
+              y2 (range height) ]
 
         (let [dist (euclidean-distance [start-x start-y end-x end-y] [x1 y1 x2 y2])]
           (prn (map type [x1 y1 x2 y2]))
-          (prn (map type pixel-array))
-          (prn (map type (- d dist)))
+          (prn type pixel-array)
           (if (<= dist d)
              (aset pixel-array x1 y1 x2 y2 (- d dist)))))
 
@@ -59,7 +58,7 @@
 (def pixels (get-pixels bi))
 
 
-(defn -main
+(defn main
   "Application entry point"
    [& args]
 
@@ -69,3 +68,10 @@
   ;; the zoom function will automatically interpolate the pixel values
   (show bi :zoom 10.0 :title "Isn't it beautiful?"))
 
+;;;;;;
+(defn -main [& args]
+  ;(let [;img-size 32
+        ;bi (new-image img-size img-size)
+        ;pixel-array (partition img-size (get-pixels bi))]
+        (let [pixel-array (partition 2 (into-array (range 10)))] (aset pixel-array 1 2 3 4 5))
+        )
